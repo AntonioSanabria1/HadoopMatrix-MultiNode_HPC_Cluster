@@ -1,0 +1,7 @@
+# Ignorar las matrices generadas localmente
+Matrices/
+
+# Ignorar archivos temporales de Python y del sistema
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Configuración de HDFS (Hadoop Distributed File System).
+  Optimizado para tolerancia a fallos en una red LAN escolar.
+-->
+<configuration>
+    <!-- Factor de replicación: fijado en 1 para clústeres pequeños (1-5 nodos).
+         Aumentar a 2 o 3 cuando haya más de 5 DataNodes conectados. -->
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+        <description>Número de réplicas por bloque. Con pocos nodos, 1 es suficiente y evita warnings de bloques faltantes.</description>
+    </property>
+
+    <!-- Directorio para almacenar los metadatos del NameNode (solo maestro) -->
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>/opt/hadoop/data/dfs/name</value>
+    </property>
+
+    <!-- Directorio para almacenar los bloques de datos del DataNode (maestro y trabajadores) -->
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data/dfs/data</value>
+    </property>
+
+    <!-- Desactivar permisos para simplificar pruebas entre diferentes laptops -->
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+
+    <!-- CRÍTICO: Usar direcciones IP para transferencia de datos en vez de hostnames.
+         En la red del aula, los DNS locales no resolverán los hostnames de los compañeros. -->
+    <property>
+        <name>dfs.client.use.datanode.hostname</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.use.datanode.hostname</name>
+        <value>false</value>
+    </property>
+
+    <!-- CRÍTICO: Permitir que los DataNodes se registren por IP sin requerir resolución inversa de DNS -->
+    <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>false</value>
+    </property>
+</configuration>

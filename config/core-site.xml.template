@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Configuración básica de Hadoop común para todos los nodos del clúster.
+  Este archivo es generado dinámicamente al iniciar el contenedor.
+-->
+<configuration>
+    <!-- Define el sistema de archivos por defecto, apuntando al NameNode en el Maestro -->
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${HADOOP_MASTER_IP}:9000</value>
+        <description>URI del NameNode principal en la red LAN del salón.</description>
+    </property>
+
+    <!-- Carpeta temporal de Hadoop para evitar usar /tmp del host -->
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/opt/hadoop/data/tmp</value>
+        <description>Directorio base para almacenamiento temporal y metadatos locales.</description>
+    </property>
+</configuration>

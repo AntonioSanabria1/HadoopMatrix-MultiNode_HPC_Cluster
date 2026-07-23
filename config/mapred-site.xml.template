@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Configuración del framework de ejecución de tareas (MapReduce).
+  Diseñado con amplio margen de memoria y búferes generosos para matrices masivas (32 GB)
+  sin sobrecargar el motor de Docker en computadoras heterogéneas.
+-->
+<configuration>
+    <!-- Framework de ejecución apuntando a YARN -->
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+
+    <!-- Classpath necesario para Hadoop 3.x para evitar errores de ClassNotFound -->
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/mapreduce/lib/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/common/lib/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/hdfs/lib/*:$HADOOP_HOME/share/hadoop/yarn/*:$HADOOP_HOME/share/hadoop/yarn/lib/*</value>
+    </property>
+
+    <!-- ASIGNACIÓN GENEROSA DE MEMORIA RAM POR TAREA (1.5 GB POR CONTENEDOR) -->
+    <property>
+        <name>mapreduce.map.memory.mb</name>
+        <value>1536</value>
+        <description>Memoria RAM asignada a cada tarea Map (1.5 GB para amplio margen).</description>
+    </property>
+
+    <property>
+        <name>mapreduce.reduce.memory.mb</name>
+        <value>1536</value>
+        <description>Memoria RAM asignada a cada tarea Reduce (1.5 GB para amplio margen).</description>
+    </property>
+
+    <!-- OPONICIONES DE HEAP JVM (80% del límite del contenedor para evitar OOM) -->
+    <property>
+        <name>mapreduce.map.java.opts</name>
+        <value>-Xmx1200m</value>
+        <description>Heap size máximo para la JVM de la tarea Map (1200 MB).</description>
+    </property>
+
+    <property>
+        <name>mapreduce.reduce.java.opts</name>
+        <value>-Xmx1200m</value>
+        <description>Heap size máximo para la JVM de la tarea Reduce (1200 MB).</description>
+    </property>
+
+    <!-- RECURSOS Y HEAP GENEROSOS PARA EL APPLICATIONMASTER -->
+    <property>
+        <name>yarn.app.mapreduce.am.resource.mb</name>
+        <value>1024</value>
+        <description>Memoria RAM asignada al ApplicationMaster (1 GB).</description>
+    </property>
+
+    <property>
+        <name>yarn.app.mapreduce.am.command-opts</name>
+        <value>-Xmx800m</value>
+        <description>Heap size máximo para la JVM del ApplicationMaster (800 MB).</description>
+    </property>
+
+    <!-- BÚFERES GENEROSOS DE ORDENAMIENTO EN MEMORIA (Evita cuellos de botella en disco) -->
+    <property>
+        <name>mapreduce.task.io.sort.mb</name>
+        <value>384</value>
+        <description>Búfer de ordenamiento intermedio en memoria RAM (384 MB - 4x el default).</description>
+    </property>
+
+    <property>
+        <name>mapreduce.task.io.sort.factor</name>
+        <value>100</value>
+        <description>Número de streams combinados simultáneamente durante el merge.</description>
+    </property>
+
+    <!-- TOLERANCIA Y REINTENTOS PARA TRABAJOS MASIVOS -->
+    <property>
+        <name>mapreduce.task.timeout</name>
+        <value>1800000</value>
+        <description>Timeout máximo por tarea (30 minutos).</description>
+    </property>
+
+    <property>
+        <name>mapreduce.map.maxattempts</name>
+        <value>8</value>
+    </property>
+
+    <property>
+        <name>mapreduce.reduce.maxattempts</name>
+        <value>8</value>
+    </property>
+
+    <!-- COMPRESIÓN INTERMEDIA DESACTIVADA (Máxima compatibilidad LAN) -->
+    <property>
+        <name>mapreduce.map.output.compress</name>
+        <value>false</value>
+        <description>Desactivado para evitar problemas de shuffle entre arquitecturas distintas.</description>
+    </property>
+</configuration>

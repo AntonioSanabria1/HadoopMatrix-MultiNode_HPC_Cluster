@@ -15,7 +15,9 @@ Nuestros mappers de Fase 1 y Transposición detectan automáticamente cualquiera
 
 ### Fundamento Matemático
 La transposición de una matriz $A$ para obtener $A^T$ se define como:
+
 $$A^T_{j, i} = A_{i, j}$$
+
 Es decir, el elemento en la fila $i$ y columna $j$ pasa a ser el elemento en la fila $j$ y columna $i$.
 
 ### Implementación MapReduce
@@ -24,11 +26,15 @@ Dado que la transposición es una operación puramente puntual (cada elemento se
 #### Estrategia Map-Reduce
 * **Mapper ([transpose_map.py](file:///home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/mapreduce/transpose_map.py)):**
   Lee la línea, limpia los paréntesis y comas, y emite:
+  
   $$\text{Key} = j \quad , \quad \text{Value} = i, v$$
+
   *Esto le indica a Hadoop que agrupe todos los elementos que compartirán la nueva fila $j$.*
 * **Reducer ([transpose_reduce.py](file:///home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/mapreduce/transpose_reduce.py)):**
   Recibe los grupos por fila $j$, lee las tuplas de valores `i,v` y emite a HDFS la línea final en formato estándar de coordenadas:
+  
   $$(j, i, v)$$
+
 
 ```mermaid
 seqDiagram
@@ -53,7 +59,9 @@ Multiplicar dos matrices de gran escala presenta desafíos de ancho de banda y m
 
 ### Fundamento Matemático
 Sean $A$ (de tamaño $I \times K$) y $B$ (de tamaño $K \times J$). Su producto $C = A \times B$ es una matriz de tamaño $I \times J$ donde cada celda se calcula como:
+
 $$C_{i, j} = \sum_{k=0}^{K-1} A_{i, k} B_{k, j}$$
+
 
 ---
 
@@ -67,7 +75,9 @@ $$C_{i, j} = \sum_{k=0}^{K-1} A_{i, k} B_{k, j}$$
 2. **Reducer 1 ([multiply_reduce1.py](file:///home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/mapreduce/multiply_reduce1.py)):**
    Para cada clave $k$, carga los elementos correspondientes a la columna $k$ de $A$ y la fila $k$ de $B$.
    Realiza el producto cruzado entre ellos y emite cada multiplicación individual etiquetada por su celda final destino:
+   
    $$\text{Key} = i, j \quad , \quad \text{Value} = A_{i,k} \times B_{k,j}$$
+
 
 ```text
 Entrada: k
@@ -86,4 +96,6 @@ Salida Reducer 1:
    *Optimización clave:* Agrupa localmente en el nodo trabajador los valores de una celda `i,j` generados en esa máquina física y los pre-suma antes de enviarlos a través de la red LAN hacia el Reducer final. Esto reduce el tráfico por red.
 3. **Reducer 2 ([multiply_reduce2.py](file:///home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/mapreduce/multiply_reduce2.py)):**
    Recibe todas las sumas parciales para la celda destino `i,j`, realiza la acumulación final y escribe a HDFS en el formato estándar:
+   
    $$(i, j, \text{suma})$$
+

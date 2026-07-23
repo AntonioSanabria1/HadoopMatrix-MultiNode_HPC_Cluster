@@ -36,12 +36,12 @@ Para comprender a fondo el funcionamiento e implementación de cada componente d
 
 ### A. Iniciar Maestro (Solo el coordinador de clase)
 ```bash
-./start_master.sh
+docker compose up -d master
 ```
 
 ### B. Iniciar Trabajador (Demás alumnos de la clase)
 ```bash
-./unirse.sh <IP_MAESTRO>
+docker compose up -d worker
 ```
 
 ### C. Ejecución de Trabajos (Solo en la terminal del Maestro)

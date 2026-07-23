@@ -35,25 +35,17 @@ El estudiante a cargo de coordinar el clúster (Maestro) realizará los siguient
 
 ## 3. Despliegue de los Nodos Trabajadores (Compañeros de clase)
 
-Cada estudiante que participe aportando recursos (RAM/CPU) al clúster debe realizar lo siguiente:
+Cada estudiante que participe aportando recursos al clúster debe realizar lo siguiente:
 
-### Opción Universal (Mac, Windows, Linux - ¡No necesitas descargar nada!):
-```bash
-docker pull antoniosanabria/hadoop-cluster-hpc
-docker rm -f hadoop-worker 2>/dev/null || true
-docker run -d --net=host --name hadoop-worker \
-  -e HADOOP_ROLE=worker \
-  -e HADOOP_MASTER_IP=<IP_DEL_MAESTRO> \
-  -e MY_IP=<TU_IP_FISICA_WIFI> \
-  -e YARN_VCORES=4 \
-  -e YARN_MEMORY_MB=3072 \
-  antoniosanabria/hadoop-cluster-hpc
-```
+1. Pedirle al maestro los archivos `docker-compose.yml` y `.env.example`.
+2. Renombrar `.env.example` a `.env`.
+3. Editar el archivo `.env` configurando la IP del maestro (`MASTER_IP`) y su propia IP física (`MY_IP`).
+4. Abrir la terminal en esa carpeta y ejecutar:
+   ```bash
+   docker compose up -d worker
+   ```
 
-### Opción Alternativa (Si ya tienes este proyecto descargado en Linux/Mac):
-```bash
-./unirse.sh <IP_DEL_MAESTRO>
-```
+> **Nota:** El comando `--build` no es necesario ni afectará nada para los trabajadores, ya que Docker detectará automáticamente la configuración y descargará la imagen oficial más reciente (`antoniosanabria/hadoop-cluster-hpc`).
 
 ---
 

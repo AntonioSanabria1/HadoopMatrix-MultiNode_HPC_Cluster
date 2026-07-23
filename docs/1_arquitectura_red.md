@@ -12,10 +12,9 @@ En un entorno universitario de cómputo distribuido real, los estudiantes conect
 
 ---
 
-## 2. Solución: Modo de Red `--net=host`
-Para resolver el aislamiento de los contenedores Docker a través de distintas máquinas físicas, el diseño se basa rigurosamente en el parámetro:
-```bash
-docker run --net=host ...
+Para resolver el aislamiento de los contenedores Docker a través de distintas máquinas físicas, el diseño se basa rigurosamente en la directiva de Docker Compose:
+```yaml
+network_mode: "host"
 ```
 
 ### ¿Cómo funciona?

@@ -45,12 +45,17 @@ run_transposition() {
     echo "Entrada HDFS: $input"
     echo "Salida HDFS: $output"
     
+    START_TIME=$(date +%s)
+    
     "$HADOOP_HOME/bin/hadoop" jar "$STREAMING_JAR" \
         -files /opt/hadoop/mapreduce/transpose_map.py,/opt/hadoop/mapreduce/transpose_reduce.py \
         -mapper /opt/hadoop/mapreduce/transpose_map.py \
         -reducer /opt/hadoop/mapreduce/transpose_reduce.py \
         -input "$input" \
         -output "$output"
+        
+    END_TIME=$(date +%s)
+    ELAPSED=$((END_TIME - START_TIME))
         
     echo "Trabajo de transposición completado con éxito."
 }
@@ -82,6 +87,8 @@ run_multiplication() {
     echo "Matriz B: $input_b"
     echo "Salida Temporal: $temp_phase1"
     
+    START_TIME_1=$(date +%s)
+    
     "$HADOOP_HOME/bin/hadoop" jar "$STREAMING_JAR" \
         -D mapreduce.job.reduces=$NUM_REDUCERS \
         -files /opt/hadoop/mapreduce/multiply_map1.py,/opt/hadoop/mapreduce/multiply_reduce1.py \
@@ -91,6 +98,8 @@ run_multiplication() {
         -input "$input_b" \
         -output "$temp_phase1"
         
+    END_TIME_1=$(date +%s)
+        
     echo "=== Iniciando Multiplicación: FASE 2 (Suma de Productos Parciales con Combiner) ==="
     echo "Entrada: $temp_phase1"
     echo "Salida Final: $output"
@@ -98,6 +107,8 @@ run_multiplication() {
     # Ejecuta la agregación final.
     # Se usa el script multiply_reduce2.py tanto de Combiner como de Reducer.
     # El Combiner se ejecuta pasándole '--combiner' para mantener el formato key-value.
+    START_TIME_2=$(date +%s)
+    
     "$HADOOP_HOME/bin/hadoop" jar "$STREAMING_JAR" \
         -D mapreduce.job.reduces=$NUM_REDUCERS \
         -files /opt/hadoop/mapreduce/multiply_map2.py,/opt/hadoop/mapreduce/multiply_reduce2.py \
@@ -107,9 +118,25 @@ run_multiplication() {
         -input "$temp_phase1" \
         -output "$output"
         
+    END_TIME_2=$(date +%s)
+        
     # Limpiar los productos parciales temporales
     echo "Limpiando archivos temporales en HDFS..."
     "$HADOOP_HOME/bin/hdfs" dfs -rm -r -f "$temp_phase1"
+    
+    ELAPSED_1=$((END_TIME_1 - START_TIME_1))
+    ELAPSED_2=$((END_TIME_2 - START_TIME_2))
+    TOTAL_ELAPSED=$((ELAPSED_1 + ELAPSED_2))
+    
+    echo ""
+    echo "=========================================================="
+    echo "  RESUMEN DE TIEMPOS DE EJECUCIÓN (PROFILING)"
+    echo "=========================================================="
+    echo "  Fase 1 (Generación de Productos): ${ELAPSED_1} segundos"
+    echo "  Fase 2 (Suma con Combiner):       ${ELAPSED_2} segundos"
+    echo "  --------------------------------------------------------"
+    echo "  TIEMPO TOTAL DEL TRABAJO:         ${TOTAL_ELAPSED} segundos"
+    echo "=========================================================="
     
     echo "Multiplicación matricial de dos fases completada con éxito."
 }

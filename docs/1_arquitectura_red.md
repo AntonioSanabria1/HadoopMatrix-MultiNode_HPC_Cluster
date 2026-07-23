@@ -26,13 +26,13 @@ docker run --net=host ...
 ```mermaid
 graph TD
     subgraph Laptop1 ["Laptop 1 (Maestro)"]
-        A[Contenedor Maestro] -- Comparte Red -- HostNet1[Host: 192.168.1.100]
+        A[Contenedor Maestro] <-->|Comparte Red| HostNet1[Host: 192.168.1.100]
     end
     subgraph Laptop2 ["Laptop 2 (Trabajador)"]
-        B[Contenedor Trabajador 1] -- Comparte Red -- HostNet2[Host: 192.168.1.101]
+        B[Contenedor Trabajador 1] <-->|Comparte Red| HostNet2[Host: 192.168.1.101]
     end
     subgraph Laptop3 ["Laptop 3 (Trabajador)"]
-        C[Contenedor Trabajador 2] -- Comparte Red -- HostNet3[Host: 192.168.1.102]
+        C[Contenedor Trabajador 2] <-->|Comparte Red| HostNet3[Host: 192.168.1.102]
     end
     HostNet1 <-->|LAN del Salón - Puerto 2222 y Hadoop Ports| HostNet2
     HostNet1 <-->|LAN del Salón - Puerto 2222 y Hadoop Ports| HostNet3

@@ -37,7 +37,7 @@ Dado que la transposición es una operación puramente puntual (cada elemento se
 
 
 ```mermaid
-seqDiagram
+sequenceDiagram
     participant HDFS_In as HDFS Entrada
     participant Map as Mapper
     participant Shuffle as Hadoop Shuffle & Sort

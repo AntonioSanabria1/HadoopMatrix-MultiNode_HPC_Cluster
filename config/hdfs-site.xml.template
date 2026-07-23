@@ -47,4 +47,10 @@
         <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
         <value>false</value>
     </property>
+
+    <!-- CRÍTICO: Obligar al DataNode a reportarse al NameNode utilizando su IP física local (MY_IP) -->
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${MY_IP}</value>
+    </property>
 </configuration>

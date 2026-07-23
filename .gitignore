@@ -5,3 +5,9 @@ Matrices/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Ignorar archivos de Docker y datos pesados de HDFS
+.env
+data/
+tmp/
+*.txt

@@ -28,14 +28,14 @@ if docker ps -a --format '{{.Names}}' | grep -q "^hadoop-master$"; then
 fi
 
 echo "Desplegando contenedor maestro con Docker..."
-docker run -d --net=host --name hadoop-master \
+docker run -d --net=host --name hadoop-master-1 \
   -e HADOOP_ROLE=master \
   -e HADOOP_MASTER_IP="${MASTER_IP}" \
   -e YARN_MEMORY_MB=4096 \
   -e YARN_VCORES=2 \
-  -v "/run/media/sanabria/Disco Local 2/Matrices:/opt/hadoop/Matrices" \
-  -v "/run/media/sanabria/Disco Local 2/HadoopProject/tmp:/tmp/hadoop-root" \
-  -v "/run/media/sanabria/Disco Local 2/HadoopProject/data:/opt/hadoop/data" \
+  -v "/home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/Matrices/5000:/opt/hadoop/Matrices" \
+  -v "/home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/tmp:/tmp/hadoop-root" \
+  -v "/home/sanabria/Documentos/Escuela/Cuatrimestre3/HPC3/Proyecto1_clean/data:/opt/hadoop/data" \
   -v "$(pwd)/mapreduce:/opt/hadoop/mapreduce" \
   -v "$(pwd)/scripts:/opt/hadoop/scripts" \
   antoniosanabria/hadoop-cluster-hpc

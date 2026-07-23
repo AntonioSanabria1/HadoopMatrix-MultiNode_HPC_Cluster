@@ -1,0 +1,28 @@
+services:
+  master:
+    image: antoniosanabria/hadoop-cluster-hpc
+    container_name: hadoop-master
+    network_mode: "host"
+    environment:
+      - HADOOP_ROLE=master
+      - HADOOP_MASTER_IP=${MASTER_IP}
+      - MY_IP=${MY_IP}
+      - YARN_MEMORY_MB=${YARN_MEMORY_MB:-4096}
+      - YARN_VCORES=${YARN_VCORES:-2}
+    volumes:
+      - ./Matrices:/opt/hadoop/Matrices
+      - ./tmp:/tmp/hadoop-root
+      - ./data:/opt/hadoop/data
+      - ./mapreduce:/opt/hadoop/mapreduce
+      - ./scripts:/opt/hadoop/scripts
+
+  worker:
+    image: antoniosanabria/hadoop-cluster-hpc
+    container_name: hadoop-worker
+    network_mode: "host"
+    environment:
+      - HADOOP_ROLE=worker
+      - HADOOP_MASTER_IP=${MASTER_IP}
+      - MY_IP=${MY_IP}
+      - YARN_MEMORY_MB=${YARN_MEMORY_MB:-4096}
+      - YARN_VCORES=${YARN_VCORES:-2}

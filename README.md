@@ -20,44 +20,35 @@ Este proyecto implementa una infraestructura distribuida de Hadoop (HDFS y YARN)
 
 ---
 
-## Guía Rápida de Despliegue en Clase
+## Guía Rápida de Despliegue en Clase (Con Docker Compose)
+
+### 0. Configurar archivo `.env`
+Antes de iniciar, debes crear un archivo `.env` en la raíz del proyecto. Puedes basarte en el archivo `.env.example`:
+```bash
+cp .env.example .env
+```
+Edita el archivo `.env` y configura las IPs físicas:
+* `MASTER_IP`: La IP de la computadora que actuará como maestro.
+* `MY_IP`: La IP de **tu propia computadora** en la red local (Wi-Fi o Ethernet). Si eres el maestro, será la misma que `MASTER_IP`.
 
 ### 1. Iniciar Maestro (Laptop del Coordinador)
-En tu laptop, conéctate a la red del salón y ejecuta:
-
+En tu laptop, conéctate a la red y ejecuta:
 ```bash
-chmod +x start_master.sh unirse.sh
-./start_master.sh
+docker compose up -d master
 ```
-
 > **Nota:** El Maestro iniciará NameNode + ResourceManager y **también DataNode + NodeManager** para realizar cómputo y almacenamiento local.
 
 ---
 
 ### 2. Iniciar Trabajadores (Laptops de Compañeros - Mac / Windows / Linux)
-Tus compañeros **NO necesitan clonar el repositorio**. Solo se conectan a la misma red Wi-Fi y ejecutan en su terminal:
-
-#### Opción Universal (Mac, Windows, Linux - ¡No necesitas descargar nada!):
+Tus compañeros deben tener el archivo `docker-compose.yml` y su propio `.env` configurado. Luego, en su terminal ejecutan:
 ```bash
-docker pull antoniosanabria/hadoop-cluster-hpc
-docker rm -f hadoop-worker 2>/dev/null || true
-docker run -d --net=host --name hadoop-worker \
-  -e HADOOP_ROLE=worker \
-  -e HADOOP_MASTER_IP=<IP_DEL_MAESTRO> \
-  -e MY_IP=<TU_IP_FISICA_WIFI> \
-  -e YARN_VCORES=4 \
-  -e YARN_MEMORY_MB=3072 \
-  antoniosanabria/hadoop-cluster-hpc
+docker compose up -d worker
 ```
 
-#### 📁 Opción Alternativa (Si ya tienes este proyecto descargado en Linux/Mac):
-```bash
-./unirse.sh <IP_DEL_MAESTRO>
-```
-
-> 📌 **Notas Importantes:**
-> * **Asignación de Recursos:** Por defecto cada laptop asigna **4 vCores de CPU** y **3 GB de RAM** (`YARN_VCORES=4`, `YARN_MEMORY_MB=3072`) a YARN, lo cual maximiza el paralelismo sin congelar el sistema operativo host.
-> * **Re-iniciar Contenedor:** Si a un compañero le aparece el error de nombre ocupado, solo debe remover el contenedor anterior corriendo: `docker rm -f hadoop-worker`.
+> **Notas Importantes:**
+> * **Para detener o eliminar el nodo:** Simplemente ejecuta `docker compose down`.
+> * **Asignación de Recursos:** Puedes modificar `YARN_VCORES` y `YARN_MEMORY_MB` en el archivo `.env` para asignar más o menos recursos.
 
 ---
 
